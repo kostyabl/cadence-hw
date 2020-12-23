@@ -5,16 +5,16 @@ services:
     ports:
       - "9042:9042"
     volumes:
-      - ./data/cassandra:/var/lib/cassandra  # Link volume to local data directory to prevent data loss
+      - ./data/cassandra:/var/lib/cassandra
   statsd:
-    image: hopsoft/graphite-statsd
+    image: graphiteapp/graphite-statsd
     ports:
-      - "8188:80"
+      - "8080:80"
       - "2003:2003"
       - "8125:8125"
       - "8126:8126"
   cadence:
-    image: ubercadence/server:0.9.5-auto-setup  # Update this version number if there are new versions release
+    image: ubercadence/server:master-auto-setup
     ports:
       - "7933:7933"
       - "7934:7934"
@@ -28,14 +28,10 @@ services:
       - cassandra
       - statsd
   cadence-web:
-    image: ubercadence/web:3.4.1
+    image: ubercadence/web:latest
     environment:
       - "CADENCE_TCHANNEL_PEERS=cadence:7933"
     ports:
       - "8088:8088"
     depends_on:
       - cadence
-networks:
-  default:
-    external:
-      name: default_cluster
